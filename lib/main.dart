@@ -1,23 +1,28 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'note_player.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MyApp(4, 4));
 
 class MyApp extends StatelessWidget {
-  final int _rowCount = 4;
-  final int _columnCount = 4;
+  final int rowCount;
+  final int columnCount;
+  final int noteCount;
+  final NotePlayer notePlayer;
+
+  MyApp(this.rowCount, this.columnCount)
+      : noteCount = rowCount * columnCount,
+        notePlayer = NotePlayer('audio/', rowCount * columnCount);
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     turnOffNavigationBar();
 
     return MaterialApp(
-      // debugShowCheckedModeBanner: false,
-      title: 'Welcome to Flutter',
       home: Scaffold(
         body: Column(
           children: _buildRows(),
@@ -28,11 +33,11 @@ class MyApp extends StatelessWidget {
 
   List<Widget> _buildRows() {
     return List.generate(
-        _rowCount, (y) => Expanded(child: Row(children: _buildTiles(y))));
+        rowCount, (y) => Expanded(child: Row(children: _buildTiles(y))));
   }
 
   List<Widget> _buildTiles(y) {
-    return List.generate(_columnCount, (x) => _buildTile(x, y));
+    return List.generate(columnCount, (x) => _buildTile(x, y));
   }
 
   Widget _buildTile(int x, int y) {
@@ -40,11 +45,9 @@ class MyApp extends StatelessWidget {
     return Expanded(
       child: Material(
         color: Color.fromRGBO(brightness, brightness, brightness, 1.0),
-        child: InkWell(
-          onTap: () {
-            print("$x $y Container clicked");
-          },
-        ),
+        child: InkWell(onTap: () => notePlayer.playNote(y * 4 + x + 1)
+            // GestureDetector // onPanUpdate: (DragDownDetails details) => _playNote(y * 4 + x + 1)
+            ),
       ),
     );
   }
