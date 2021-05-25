@@ -14,7 +14,6 @@ class NotePlayer {
       await _initializeAudioCache();
     }
     audioCache.playBytes(fileCache![index]);
-    print("$index Container clicked");
   }
 
   _initializeAudioCache() async {
